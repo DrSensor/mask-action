@@ -47,6 +47,13 @@ async function run(): Promise<void> {
       core.endGroup()
     }
 
+    core.info('Begin to run each commands')
+    for (const cmd of commands) {
+      core.startGroup(`mask ${cmd}`)
+      if (parallel) exec('mask', cmd.split(/\s/))
+      else await exec('mask', cmd.split(/\s/))
+      core.endGroup()
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
