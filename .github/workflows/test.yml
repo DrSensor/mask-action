@@ -26,5 +26,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ./
+      if: matrix.os == 'macos-latest'
+      with: 
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        commands: run
+    - uses: ./
+      if: matrix.os != 'macos-latest'
       with: 
         commands: run

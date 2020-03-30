@@ -8,6 +8,9 @@ inputs:
   parallel:
     description: 'run commands in parallel'
     default: false
+  github-token:
+    description: 'a workaround for running in macos'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

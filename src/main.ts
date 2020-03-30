@@ -15,7 +15,8 @@ async function run(): Promise<void> {
   try {
     const commands = core.getInput('commands').split('\n')
     const parallel = core.getInput('parallel') === 'true'
-    const octokit = new Octokit()
+    const auth = core.getInput('github-token')
+    const octokit = new Octokit({auth})
 
     core.startGroup('install mask')
     const {data: release} = await octokit.repos.getLatestRelease(MASK_REPO)
