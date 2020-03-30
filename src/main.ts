@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import {exec} from '@actions/exec'
 import {Octokit} from '@octokit/rest'
 import {downloadTool, extractZip, cacheDir} from '@actions/tool-cache'
 import {platform as getOS} from 'os'
@@ -19,25 +20,32 @@ async function run(): Promise<void> {
     const octokit = new Octokit({auth})
 
     core.startGroup('install mask')
-    const {data: release} = await octokit.repos.getLatestRelease(MASK_REPO)
-    const assets = release.assets
-      .filter(({content_type: s}) => s.includes('octet-stream'))
-      .map(({name, browser_download_url: downloadURL}) => ({
-        downloadURL,
-        name: name.replace('.zip', ''),
-        platform: name.match(/darwin|linux|windows|openbsd|sun-solaris/)?.[0]
-      }))
+    if (getOS() === 'win32') await exec('cargo install mask')
+    else {
+      const {data: release} = await octokit.repos.getLatestRelease(MASK_REPO)
+      const assets = release.assets
+        .filter(({content_type: s}) => s.includes('octet-stream'))
+        .map(({name, browser_download_url: downloadURL}) => ({
+          downloadURL,
+          name: name.replace('.zip', ''),
+          platform: name.match(/darwin|linux|windows|openbsd|sun-solaris/)?.[0]
+        }))
+      const filterPlatform = (p: string): Asset =>
+        assets.filter(({platform: o}) => o === p)[0]
 
-    const {downloadURL, name} = assets.filter(({platform: o}) => o === getOS())[0]
-    const zipFile = await downloadTool(downloadURL)
-    const extractPath = await extractZip(zipFile, INSTALL_PATH)
-    const cache = await cacheDir(
-      path.join(extractPath, name),
-      'mask',
-      release.tag_name
-    )
-    core.addPath(cache)
-    core.endGroup()
+      const {downloadURL, name} = filterPlatform(
+        getOS() === 'win32' ? 'windows' : getOS()
+      )
+      const zipFile = await downloadTool(downloadURL)
+      const extractPath = await extractZip(zipFile, INSTALL_PATH)
+      const cache = await cacheDir(
+        path.join(extractPath, name),
+        'mask',
+        release.tag_name
+      )
+      core.addPath(cache)
+      core.endGroup()
+    }
 
   } catch (error) {
     core.setFailed(error.message)
