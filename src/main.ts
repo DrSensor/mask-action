@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {GitHub} from '@octokit/GitHub'
+import {Octokit} from '@octokit/rest'
 import {downloadTool, extractZip, cacheDir} from '@actions/tool-cache'
 import {platform as getOS} from 'os'
 import * as path from 'path'
@@ -15,7 +15,7 @@ async function run(): Promise<void> {
   try {
     const commands = core.getInput('commands').split('\n')
     const parallel = core.getInput('parallel') === 'true'
-    const octokit = new GitHub({})
+    const octokit = new Octokit()
 
     core.startGroup('install mask')
     const {data: release} = await octokit.repos.getLatestRelease(MASK_REPO)
