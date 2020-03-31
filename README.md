@@ -43,13 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: ./
+    - uses: DrSensor/mask-action@v1
       with: { commands: run examples }
 ```
 
 - It's also possible to run multiple tasks:
 ```yml
-    - uses: ./
+    - uses: DrSensor/mask-action@v1
       with:
         commands: |-
           run executables
@@ -58,7 +58,7 @@ jobs:
 
 - There is also an option to run them in parallel:
 ```yml
-    - uses: ./
+    - uses: DrSensor/mask-action@v1
       with:
         parallel: true
         commands: |-

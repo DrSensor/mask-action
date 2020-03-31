@@ -1,6 +1,11 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'mask-action'
+description: 'Github Action for running (or just install) "mask" task runner'
+author: 'Fahmi Akbar Wildana <sensorfied@gmail.com>'
+branding:
+  icon: "terminal"
+  color: "gray-dark"
+
+
 inputs:
   commands:
     description: 'arguments to be passed'
